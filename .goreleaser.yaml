@@ -32,14 +32,27 @@ release:
     owner: phall1
     name: phbv
 
-# Homebrew tap — uncomment once the tap repo exists (github.com/phall1/homebrew-tap)
-# and a HOMEBREW_TAP_TOKEN secret (a PAT with repo scope on the tap) is set in CI.
-# brews:
-#   - repository:
-#       owner: phall1
-#       name: homebrew-tap
-#       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
-#     homepage: https://github.com/phall1/phbv
-#     description: Terminal UI for beads (bd) issue tracking
-#     install: |
-#       bin.install "phbv"
+# Publishes a Casks/phbv.rb into github.com/phall1/homebrew-tap on each release
+# (Homebrew casks are GoReleaser's path for pre-built binaries). Requires a
+# HOMEBREW_TAP_TOKEN secret in the phbv repo with write access to the tap (see
+# README). Without it, the release job fails at this step — set the secret
+# before cutting the next tag.
+homebrew_casks:
+  - name: phbv
+    binaries:
+      - phbv
+    repository:
+      owner: phall1
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    homepage: "https://github.com/phall1/phbv"
+    description: "Terminal UI for beads (bd) issue tracking"
+    # phbv isn't code-signed, so strip the quarantine xattr post-install or
+    # Gatekeeper blocks the downloaded binary.
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/phbv"]
+          end

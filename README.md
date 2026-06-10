@@ -23,8 +23,8 @@ go install github.com/phall1/phbv@latest
 curl -fsSL https://raw.githubusercontent.com/phall1/phbv/main/install.sh | sh
 #   override the dir: … | PREFIX=/usr/local/bin sh
 
-# …or Homebrew (coming once the tap exists)
-# brew install phall1/tap/phbv
+# …or Homebrew
+brew install phall1/tap/phbv
 ```
 
 Releases are cut by pushing a `v*` tag — GitHub Actions runs
