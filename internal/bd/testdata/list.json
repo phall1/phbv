@@ -1,0 +1,97 @@
+[
+  {
+    "id": "agent-browser-yx8.14",
+    "title": "tao-coherence: derive identity surface from single persona seed",
+    "description": "The hard lesson from anti-detect: any single datapoint is easy; the joint distribution kills you. Coherence must derive every observable from one persona seed consistently.\\n\\nVertical slice v0:\\n1. Hardware profile → screen resolution, devicePixelRatio, colorDepth\\n2. GPU → WebGL vendor/renderer string, canvas behavior\\n3. Locale → timezone, language, geolocation alignment\\n4. Network → proxy location matches timezone/locale\\n5. Validate with CreepJS self-hosted target — zero consistency failures\\n\\nThis is the 'forged papers' layer. Without it, perfect behavior dies on a mismatched GPU string.\\n\\nSee tao/SPEC.md §2.5 COHERENCE for full architecture.",
+    "status": "open",
+    "priority": 1,
+    "issue_type": "task",
+    "owner": "285990037+jericho-ct12@users.noreply.github.com",
+    "created_at": "2026-06-06T14:55:02Z",
+    "created_by": "jericho-ct12",
+    "updated_at": "2026-06-06T14:55:02Z",
+    "dependencies": [
+      {
+        "issue_id": "agent-browser-yx8.14",
+        "depends_on_id": "agent-browser-yx8",
+        "type": "parent-child",
+        "created_at": "2026-06-06T10:55:02Z",
+        "created_by": "jericho-ct12",
+        "metadata": "{}"
+      }
+    ],
+    "dependency_count": 0,
+    "dependent_count": 0,
+    "comment_count": 0,
+    "parent": "agent-browser-yx8"
+  },
+  {
+    "id": "agent-browser-a9s.2.1",
+    "title": "tao-mirror: expand integrity probe with rebrowser CDP leak checks",
+    "description": "Current Tier-0 integrity probe covers navigator.webdriver, headless UA, plugins, languages, window.chrome. Missing CDP-specific tells that rebrowser-bot-detector catches.\\n\\nGaps to close:\\n1. Runtime.enable console signature (CDP injects a detectable console method)\\n2. Page.addScriptToEvaluateOnNewDocument ordering (automation scripts load before page scripts)\\n3. Dummy function leaks (ChromeDriver exposes internal communication functions)\\n4. Exposed CDP port / ws endpoint detection\\n\\nWork:\\n1. Study rebrowser-bot-detector source for complete leak surface\\n2. Add each check to detect/probe.ts\\n3. Run probe against LiveActuator-driven real Chrome\\n4. Wire results into MIRROR combine() so Tier-0 failures cap the honest score\\n\\nSee rebrowser-bot-detector repo (public, self-hostable in CI).",
+    "status": "open",
+    "priority": 1,
+    "issue_type": "task",
+    "owner": "285990037+jericho-ct12@users.noreply.github.com",
+    "created_at": "2026-06-06T14:55:01Z",
+    "created_by": "jericho-ct12",
+    "updated_at": "2026-06-06T14:55:01Z",
+    "dependencies": [
+      {
+        "issue_id": "agent-browser-a9s.2.1",
+        "depends_on_id": "agent-browser-a9s.2",
+        "type": "parent-child",
+        "created_at": "2026-06-06T10:55:01Z",
+        "created_by": "jericho-ct12",
+        "metadata": "{}"
+      }
+    ],
+    "dependency_count": 0,
+    "dependent_count": 0,
+    "comment_count": 0,
+    "parent": "agent-browser-a9s.2"
+  },
+  {
+    "id": "agent-browser-yx8.13",
+    "title": "tao-motor-v2: close the FP-Agent gaps (drive human-vs-TAO AUC toward 0.5)",
+    "description": "Concrete, MEASURED gradient from the oracle-validated FP-Agent eval (human-vs-TAO AUC currently 0.999). Close in priority order, re-running eval/human-vs-tao.ts after each: (1) mousemove SAMPLE DENSITY — TAO emits ~36 moves/session vs human ~618 (16x too sparse); emit far more intermediate points at realistic sampling. (2) KEY-DWELL — hold latency idx39-42 is exactly 0 vs human ~85-105ms; add per-key press duration (keydown-\u003ekeyup gap) to the motor. (3) CURVATURE VARIANCE — paths too smooth/uniform (idx5/7/11 direction-stdev, angle-range, curvature-distance); add micro-jitter/sub-movements so direction+curvature distributions widen. (4) CHUNKED SCROLL — single uniform burst (idx26/27 ~444 vs human ~180-197); break scrolling into smaller varied increments with pauses (and emit real sc/se offset events). (5) dangling key flags (idx43/44) + realistic typo count (idx45, human ~7.5 vs TAO ~0.9). Target: AUC well below the 7 agents, ideally toward 0.5.",
+    "design": "Each fix is independently measurable via the validated featurizer. This is a real optimization loop now — change motor, re-run, watch AUC. No more self-grading.",
+    "status": "open",
+    "priority": 1,
+    "issue_type": "task",
+    "owner": "285990037+jericho-ct12@users.noreply.github.com",
+    "created_at": "2026-06-04T04:19:43Z",
+    "created_by": "jericho-ct12",
+    "updated_at": "2026-06-04T00:19:43Z",
+    "dependencies": [
+      {
+        "issue_id": "agent-browser-yx8.13",
+        "depends_on_id": "agent-browser-yx8.4",
+        "type": "blocks",
+        "created_at": "2026-06-04T00:19:43Z",
+        "created_by": "jericho-ct12",
+        "metadata": "{}"
+      },
+      {
+        "issue_id": "agent-browser-yx8.13",
+        "depends_on_id": "agent-browser-yx8",
+        "type": "parent-child",
+        "created_at": "2026-06-04T00:19:42Z",
+        "created_by": "jericho-ct12",
+        "metadata": "{}"
+      },
+      {
+        "issue_id": "agent-browser-yx8.13",
+        "depends_on_id": "agent-browser-yx8.12",
+        "type": "blocks",
+        "created_at": "2026-06-04T00:19:43Z",
+        "created_by": "jericho-ct12",
+        "metadata": "{}"
+      }
+    ],
+    "dependency_count": 2,
+    "dependent_count": 0,
+    "comment_count": 0,
+    "parent": "agent-browser-yx8"
+  }
+]

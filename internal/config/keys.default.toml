@@ -1,0 +1,30 @@
+# phbv canonical default keymap.
+#
+# This file is embedded into the binary at build time (//go:embed) and is the
+# source of truth for default bindings. Do NOT edit it to customize your own
+# keys — instead drop a partial override at:
+#
+#     $XDG_CONFIG_HOME/phbv/keys.toml   (typically ~/.config/phbv/keys.toml)
+#
+# User overrides are merged over these defaults action-by-action, so you only
+# list the actions you want to change. Each action maps to a list of key
+# strings using Bubble Tea key names (e.g. "enter", "tab", "shift+tab",
+# "ctrl+c", "up", "k").
+
+[keys]
+quit      = ["q", "ctrl+c"]
+next_view = ["tab"]
+prev_view = ["shift+tab"]
+up        = ["k", "up"]
+down      = ["j", "down"]
+open      = ["enter", "l"]
+back      = ["esc", "h"]
+filter    = ["/"]
+refresh   = ["r"]
+close     = ["x"]
+reopen    = ["X"]
+prio_up   = ["+", "="]
+prio_down = ["-"]
+deptree   = ["t"]
+projects  = ["p"]
+assign    = ["a"]
