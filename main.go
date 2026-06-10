@@ -18,9 +18,18 @@ import (
 	"github.com/phall1/phbv/internal/ui"
 )
 
+// gitSHA is set via -ldflags at build time (see Makefile); "dev" for `go run`.
+var gitSHA = "dev"
+
 func main() {
 	dir := flag.String("dir", "", "path to a .beads directory (default: $BEADS_DIR or cwd resolution)")
+	showVersion := flag.Bool("version", false, "print version and exit")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("phbv", gitSHA)
+		return
+	}
 
 	beadsDir := *dir
 	if beadsDir == "" {

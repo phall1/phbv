@@ -145,6 +145,30 @@ func TestPriorityClamp(t *testing.T) {
 	}
 }
 
+func TestToggleAllShowsScopeAndFetches(t *testing.T) {
+	m := testModel(t)
+	if m.showAll {
+		t.Fatal("showAll should default to false")
+	}
+	// 'A' toggles include-closed and issues a fetch command.
+	mm, cmd := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'A'}})
+	got := mm.(Model)
+	if !got.showAll {
+		t.Error("expected showAll true after 'A'")
+	}
+	if cmd == nil {
+		t.Error("expected a fetch command after toggling all")
+	}
+	if !strings.Contains(got.View(), "(all)") {
+		t.Errorf("header should show (all) scope when showAll\n---\n%s", got.View())
+	}
+	// toggling again turns it back off.
+	mm2, _ := got.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'A'}})
+	if mm2.(Model).showAll {
+		t.Error("expected showAll false after second 'A'")
+	}
+}
+
 func TestQuitKey(t *testing.T) {
 	m := testModel(t)
 	_, cmd := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})

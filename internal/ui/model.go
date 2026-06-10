@@ -76,6 +76,7 @@ type Model struct {
 	projectRoot string // parent dir scanned for sibling .beads workspaces
 	beadsDir    string // the active .beads dir being watched
 	assignee    string // resolved git user.email / $USER, used for `a` assign
+	showAll     bool   // when true, list includes closed issues (bd --all)
 
 	width, height int
 	loading       bool
@@ -141,10 +142,16 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) fetchList() tea.Cmd {
 	c := m.client
+	// bd hides closed issues by default; --all includes them so the list view
+	// isn't misleadingly empty once work is done.
+	var extra []string
+	if m.showAll {
+		extra = []string{"--all"}
+	}
 	return func() tea.Msg {
 		ctx, cancel := context.WithTimeout(context.Background(), fetchTimeout)
 		defer cancel()
-		issues, err := c.List(ctx)
+		issues, err := c.List(ctx, extra...)
 		if err != nil {
 			return errMsg{err}
 		}
@@ -269,6 +276,11 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key_matches(msg, m.keys, "refresh"):
 		m.loading = true
 		return m, m.refetch()
+
+	case key_matches(msg, m.keys, "toggle_all"):
+		m.showAll = !m.showAll
+		m.cursor = 0
+		return m, m.fetchList()
 
 	case key_matches(msg, m.keys, "filter"):
 		if m.view == viewList || m.view == viewReady {
@@ -489,7 +501,11 @@ func (m Model) View() string {
 
 func (m Model) header() string {
 	left := headerStyle.Render(fmt.Sprintf("phbv ─ %s", m.project))
-	mid := dimStyle.Render(fmt.Sprintf("  [%s]", m.view.title()))
+	scope := ""
+	if m.showAll {
+		scope = " (all)"
+	}
+	mid := dimStyle.Render(fmt.Sprintf("  [%s]%s", m.view.title(), scope))
 	right := ""
 	if m.schema.Drifted() {
 		right = "  " + driftStyle.Render(fmt.Sprintf("⚠ bd schema %d (tested %d)", m.schema.Version, bd.SchemaVersionTested))
@@ -555,7 +571,7 @@ func (m Model) footer() string {
 	hints := []string{
 		"tab views", "/ filter", "enter open",
 		"x close", "X reopen", "+/- prio", "a assign",
-		"t deptree", "p projects", "r refresh", "q quit",
+		"t deptree", "p projects", "A all", "r refresh", "q quit",
 	}
 	return footerStyle.Width(m.width).Render(strings.Join(hints, " · "))
 }

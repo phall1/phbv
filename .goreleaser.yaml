@@ -1,0 +1,45 @@
+# GoReleaser config — builds cross-platform binaries and publishes a GitHub
+# Release on every pushed `v*` tag (see .github/workflows/release.yml).
+# Validate locally with `just snapshot` (needs goreleaser installed).
+version: 2
+
+project_name: phbv
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - main: .
+    binary: phbv
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w -X main.gitSHA={{ .ShortCommit }}
+
+archives:
+  # name_template must stay in sync with install.sh's URL construction.
+  - name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    formats: [tar.gz]
+
+checksum:
+  name_template: checksums.txt
+
+release:
+  github:
+    owner: phall1
+    name: phbv
+
+# Homebrew tap — uncomment once the tap repo exists (github.com/phall1/homebrew-tap)
+# and a HOMEBREW_TAP_TOKEN secret (a PAT with repo scope on the tap) is set in CI.
+# brews:
+#   - repository:
+#       owner: phall1
+#       name: homebrew-tap
+#       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+#     homepage: https://github.com/phall1/phbv
+#     description: Terminal UI for beads (bd) issue tracking
+#     install: |
+#       bin.install "phbv"
