@@ -1,3 +1,5 @@
+> Not actively maintained
+
 # phbv
 
 A terminal UI for [beads](https://github.com/gastownhall/beads) (`bd`) — view,
